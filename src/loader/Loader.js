@@ -122,12 +122,6 @@ Phaser.Loader = function (game) {
     this._fileList = [];
 
     /**
-    * @property {number} _fileIndex - The index of the current file being loaded.
-    * @private
-    */
-    this._fileIndex = 0;
-
-    /**
     * @property {number} _progressChunk - Indicates the size of 1 file in terms of a percentage out of 100.
     * @private
     * @default
@@ -319,7 +313,6 @@ Phaser.Loader.prototype = {
         this._packIndex = 0;
 
         this._fileList.length = 0;
-        this._fileIndex = 0;
 
     },
 
@@ -1009,9 +1002,8 @@ Phaser.Loader.prototype = {
 
         if (this._fileList.length > 0)
         {
-            this._fileIndex = 0;
             this._progressChunk = 100 / this._fileList.length;
-            this.loadFile();
+            this.loadFile(0);
         }
         else
         {
@@ -1209,15 +1201,15 @@ Phaser.Loader.prototype = {
     * @method Phaser.Loader#loadFile
     * @private
     */
-    loadFile: function () {
+    loadFile: function (fileIndex) {
 
-        if (!this._fileList[this._fileIndex])
+        if (!this._fileList[fileIndex])
         {
-            console.warn('Phaser.Loader loadFile invalid index ' + this._fileIndex);
+            console.warn('Phaser.Loader loadFile invalid index ' + fileIndex);
             return;
         }
 
-        var file = this._fileList[this._fileIndex];
+        var file = this._fileList[fileIndex];
         var _this = this;
 
         this.onFileStart.dispatch(this.progress, file.key, file.url);
@@ -1232,10 +1224,10 @@ Phaser.Loader.prototype = {
                 file.data = new Image();
                 file.data.name = file.key;
                 file.data.onload = function () {
-                    return _this.fileComplete(_this._fileIndex);
+                    return _this.fileComplete(fileIndex);
                 };
                 file.data.onerror = function () {
-                    return _this.fileError(_this._fileIndex);
+                    return _this.fileError(fileIndex);
                 };
                 if (this.crossOrigin)
                 {
@@ -1252,7 +1244,7 @@ Phaser.Loader.prototype = {
                     //  WebAudio or Audio Tag?
                     if (this.game.sound.usingWebAudio)
                     {
-                        this.xhrLoad(this._fileIndex, this.baseURL + file.url, 'arraybuffer', 'fileComplete', 'fileError');
+                        this.xhrLoad(fileIndex, this.baseURL + file.url, 'arraybuffer', 'fileComplete', 'fileError');
                     }
                     else if (this.game.sound.usingAudioTag)
                     {
@@ -1263,25 +1255,25 @@ Phaser.Loader.prototype = {
                             file.data.name = file.key;
                             file.data.preload = 'auto';
                             file.data.src = this.baseURL + file.url;
-                            this.fileComplete(this._fileIndex);
+                            this.fileComplete(fileIndex);
                         }
                         else
                         {
                             file.data = new Audio();
                             file.data.name = file.key;
                             file.data.onerror = function () {
-                                return _this.fileError(_this._fileIndex);
+                                return _this.fileError(fileIndex);
                             };
                             file.data.preload = 'auto';
                             file.data.src = this.baseURL + file.url;
-                            file.data.addEventListener('canplaythrough', function () { Phaser.GAMES[_this.game.id].load.fileComplete(_this._fileIndex); }, false);
+                            file.data.addEventListener('canplaythrough', function () { Phaser.GAMES[_this.game.id].load.fileComplete(fileIndex); }, false);
                             file.data.load();
                         }
                     }
                 }
                 else
                 {
-                    this.fileError(this._fileIndex);
+                    this.fileError(fileIndex);
                 }
 
                 break;
@@ -1298,17 +1290,17 @@ Phaser.Loader.prototype = {
                     this._ajax.timeout = 3000;
 
                     this._ajax.onerror = function () {
-                        return _this.dataLoadError(_this._fileIndex);
+                        return _this.dataLoadError(fileIndex);
                     };
 
                     this._ajax.ontimeout = function () {
-                        return _this.dataLoadError(_this._fileIndex);
+                        return _this.dataLoadError(fileIndex);
                     };
 
                     this._ajax.onprogress = function() {};
 
                     this._ajax.onload = function(){
-                        return _this.jsonLoadComplete(_this._fileIndex);
+                        return _this.jsonLoadComplete(fileIndex);
                     };
 
                     this._ajax.open('GET', this.baseURL + file.url, true);
@@ -1321,25 +1313,25 @@ Phaser.Loader.prototype = {
                 }
                 else
                 {
-                    this.xhrLoad(this._fileIndex, this.baseURL + file.url, 'text', 'jsonLoadComplete', 'dataLoadError');
+                    this.xhrLoad(fileIndex, this.baseURL + file.url, 'text', 'jsonLoadComplete', 'dataLoadError');
                 }
 
                 break;
 
             case 'xml':
 
-                this.xhrLoad(this._fileIndex, this.baseURL + file.url, 'text', 'xmlLoadComplete', 'dataLoadError');
+                this.xhrLoad(fileIndex, this.baseURL + file.url, 'text', 'xmlLoadComplete', 'dataLoadError');
                 break;
 
             case 'tilemap':
 
                 if (file.format === Phaser.Tilemap.TILED_JSON)
                 {
-                    this.xhrLoad(this._fileIndex, this.baseURL + file.url, 'text', 'jsonLoadComplete', 'dataLoadError');
+                    this.xhrLoad(fileIndex, this.baseURL + file.url, 'text', 'jsonLoadComplete', 'dataLoadError');
                 }
                 else if (file.format === Phaser.Tilemap.CSV)
                 {
-                    this.xhrLoad(this._fileIndex, this.baseURL + file.url, 'text', 'csvLoadComplete', 'dataLoadError');
+                    this.xhrLoad(fileIndex, this.baseURL + file.url, 'text', 'csvLoadComplete', 'dataLoadError');
                 }
                 else
                 {
@@ -1350,11 +1342,11 @@ Phaser.Loader.prototype = {
             case 'text':
             case 'script':
             case 'physics':
-                this.xhrLoad(this._fileIndex, this.baseURL + file.url, 'text', 'fileComplete', 'fileError');
+                this.xhrLoad(fileIndex, this.baseURL + file.url, 'text', 'fileComplete', 'fileError');
                 break;
 
             case 'binary':
-                this.xhrLoad(this._fileIndex, this.baseURL + file.url, 'arraybuffer', 'fileComplete', 'fileError');
+                this.xhrLoad(fileIndex, this.baseURL + file.url, 'arraybuffer', 'fileComplete', 'fileError');
                 break;
         }
 
@@ -1492,11 +1484,11 @@ Phaser.Loader.prototype = {
 
                     if (file.format == Phaser.Loader.TEXTURE_ATLAS_JSON_ARRAY || file.format == Phaser.Loader.TEXTURE_ATLAS_JSON_HASH)
                     {
-                        this.xhrLoad(this._fileIndex, this.baseURL + file.atlasURL, 'text', 'jsonLoadComplete', 'dataLoadError');
+                        this.xhrLoad(fileIndex, this.baseURL + file.atlasURL, 'text', 'jsonLoadComplete', 'dataLoadError');
                     }
                     else if (file.format == Phaser.Loader.TEXTURE_ATLAS_XML_STARLING)
                     {
-                        this.xhrLoad(this._fileIndex, this.baseURL + file.atlasURL, 'text', 'xmlLoadComplete', 'dataLoadError');
+                        this.xhrLoad(fileIndex, this.baseURL + file.atlasURL, 'text', 'xmlLoadComplete', 'dataLoadError');
                     }
                     else
                     {
@@ -1515,7 +1507,7 @@ Phaser.Loader.prototype = {
                 {
                     //  Load the XML before carrying on with the next file
                     loadNext = false;
-                    this.xhrLoad(this._fileIndex, this.baseURL + file.xmlURL, 'text', 'xmlLoadComplete', 'dataLoadError');
+                    this.xhrLoad(fileIndex, this.baseURL + file.xmlURL, 'text', 'xmlLoadComplete', 'dataLoadError');
                 }
                 break;
 
@@ -1780,8 +1772,7 @@ Phaser.Loader.prototype = {
 
         if (this.totalQueuedFiles() > 0)
         {
-            this._fileIndex++;
-            this.loadFile();
+            this.loadFile(previousIndex + 1);
         }
         else
         {
