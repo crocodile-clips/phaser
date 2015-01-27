@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Tue Jan 27 2015 16:09:35
+* v2.2.2 "Alkindar" - Built: Tue Jan 27 2015 16:43:10
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -12328,7 +12328,7 @@ PIXI.AbstractFilter.prototype.apply = function(frameBuffer)
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Tue Jan 27 2015 16:09:35
+* v2.2.2 "Alkindar" - Built: Tue Jan 27 2015 16:43:10
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -57616,6 +57616,7 @@ Phaser.Loader.prototype = {
                 }
                 else
                 {
+                    this._ajax = null;
                     this.xhrLoad(fileIndex, this.baseURL + file.url, 'text', 'jsonLoadComplete', 'dataLoadError');
                 }
 
