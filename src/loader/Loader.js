@@ -1313,6 +1313,7 @@ Phaser.Loader.prototype = {
                 }
                 else
                 {
+                    this._ajax = null;
                     this.xhrLoad(fileIndex, this.baseURL + file.url, 'text', 'jsonLoadComplete', 'dataLoadError');
                 }
 
