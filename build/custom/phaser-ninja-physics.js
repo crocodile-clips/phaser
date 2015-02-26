@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Tue Feb 24 2015 14:57:19
+* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 12:10:31
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -12328,7 +12328,7 @@ PIXI.AbstractFilter.prototype.apply = function(frameBuffer)
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Tue Feb 24 2015 14:57:19
+* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 12:10:31
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -44674,31 +44674,31 @@ Phaser.Device = function () {
     * @default
     */
     this.cocoonJS = false;
-    
+
     /**
     * @property {boolean} cocoonJSApp - Is this game running with CocoonJS.App?
     * @default
     */
     this.cocoonJSApp = false;
-    
+
     /**
     * @property {boolean} cordova - Is the game running under Apache Cordova?
     * @default
     */
     this.cordova = false;
-    
+
     /**
     * @property {boolean} node - Is the game running under Node.js?
     * @default
     */
     this.node = false;
-    
+
     /**
     * @property {boolean} nodeWebkit - Is the game running under Node-Webkit?
     * @default
     */
     this.nodeWebkit = false;
-    
+
     /**
     * @property {boolean} ejecta - Is the game running under Ejecta?
     * @default
@@ -45107,7 +45107,7 @@ Phaser.Device.whenReady = function (callback, context, nonPrimer) {
         readyCheck._monitor = readyCheck.bind(this);
         readyCheck._queue = readyCheck._queue || [];
         readyCheck._queue.push([callback, context]);
-        
+
         var cordova = typeof window.cordova !== 'undefined';
         var cocoonJS = navigator['isCocoonJS'];
 
@@ -45274,6 +45274,8 @@ Phaser.Device._initialize = function () {
         device.quirksMode = (document.compatMode === 'CSS1Compat') ? false : true;
 
         device.getUserMedia = !!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+
+        device.blobXHR = _checkBlobXHRSupport();
 
         // TODO: replace canvasBitBltShift detection with actual feature check
 
@@ -45453,17 +45455,17 @@ Phaser.Device._initialize = function () {
         {
             device.webApp = true;
         }
-        
+
         if (typeof window.cordova !== "undefined")
         {
             device.cordova = true;
         }
-        
+
         if (typeof process !== "undefined" && typeof require !== "undefined")
         {
             device.node = true;
         }
-        
+
         if (device.node)
         {
             try {
@@ -45474,12 +45476,12 @@ Phaser.Device._initialize = function () {
                 device.nodeWebkit = false;
             }
         }
-        
+
         if (navigator['isCocoonJS'])
         {
             device.cocoonJS = true;
         }
-        
+
         if (device.cocoonJS)
         {
             try {
@@ -45582,6 +45584,29 @@ Phaser.Device._initialize = function () {
             device.vibration = true;
         }
 
+    }
+
+    /**
+    * Check for blob support
+    *
+    *
+    */
+    function _checkBlobXHRSupport () {
+        if (!window['Blob'] || device.silk || typeof XMLHttpRequest == 'undefined')
+        {
+            return false;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', '/', true);
+
+        try {
+            xhr.responseType = 'blob';
+        } catch(error) {
+            return false;
+        }
+
+        return 'response' in xhr && xhr.responseType == 'blob';
     }
 
     /**
@@ -45769,7 +45794,7 @@ Phaser.Device.isConsoleOpen = function () {
 *
 * @example
 * var defaultRenderingMode = Phaser.Device.isAndroidStockBrowser() ? Phaser.CANVAS : Phaser.AUTO;
-* 
+*
 * @method isAndroidStockBrowser
 * @memberof Phaser.Device.prototype
 */
@@ -56411,11 +56436,11 @@ Phaser.Loader = function (game) {
     * This event is dispatched when a file has either loaded or failed to load.
     *
     * Params: `(progress, file key, success?, total loaded files, total files)`
-    * 
+    *
     * @property {Phaser.Signal} onFileComplete
     */
     this.onFileComplete = new Phaser.Signal();
-   
+
     /**
     * This event is dispatched when a file (or pack) errors as a result of the load request.
     *
@@ -56522,7 +56547,7 @@ Phaser.Loader = function (game) {
     * @private
     */
     this._totalFileCount = 0;
-    
+
     /**
     * Total packs loaded - adjusted just prior to `onPackComplete`.
     * @property {integer} _loadedPackCount
@@ -56759,7 +56784,7 @@ Phaser.Loader.prototype = {
         }
 
         var fileIndex = this.getAssetIndex(type, key);
-        
+
         if (overwrite && fileIndex > -1)
         {
             var currentFile = this._fileList[fileIndex];
@@ -56843,10 +56868,10 @@ Phaser.Loader.prototype = {
             {
                 data = JSON.parse(data);
             }
-            
+
             pack.data = data || {};
         }
-        
+
         // Add before first non-pack/no-loaded ~ last pack from start prior to loading
         // (Read one past for splice-to-end)
         for (var i = 0; i < this._fileList.length + 1; i++)
@@ -57354,7 +57379,7 @@ Phaser.Loader.prototype = {
     /**
     * Add a synchronization point to a specific file/asset in the load queue.
     *
-    * This has no effect on already loaded assets.    
+    * This has no effect on already loaded assets.
     *
     * @method Phader.Loader#withSyncPoints
     * @param {function} callback - The callback is invoked and is supplied with a single argument: the loader.
@@ -57456,7 +57481,7 @@ Phaser.Loader.prototype = {
         for (var i = 0; i < this._flightQueue.length; i++)
         {
             var file = this._flightQueue[i];
-            
+
             if (file.loaded || file.error)
             {
                 this._flightQueue.splice(i, 1);
@@ -57539,7 +57564,7 @@ Phaser.Loader.prototype = {
                     this._flightQueue.push(file);
                     file.loading = true;
                     this.onFileStart.dispatch(this.progress, file.key, file.url);
-                    
+
                     this.loadFile(file);
                 }
             }
@@ -57754,7 +57779,16 @@ Phaser.Loader.prototype = {
             case 'spritesheet':
             case 'textureatlas':
             case 'bitmapfont':
-                this.loadImageTag(file);
+                if (this.game.device.blobXHR && !!window['URL'] && !!window.URL['createObjectURL'] && !this.useXDomainRequest)
+                {
+                    this.xhrLoad(file, this.transformUrl(file.url, file), 'blob', function (file, request) {
+                        this.loadImageTag(file, URL.createObjectURL(request.response));
+                    });
+                }
+                else
+                {
+                    this.loadImageTag(file, this.transformUrl(file.url, file));
+                }
                 break;
 
             case 'audio':
@@ -57821,7 +57855,7 @@ Phaser.Loader.prototype = {
     * Continue async loading through an Image tag.
     * @private
     */
-    loadImageTag: function (file) {
+    loadImageTag: function (file, url) {
 
         var _this = this;
 
@@ -57832,7 +57866,7 @@ Phaser.Loader.prototype = {
         {
             file.data.crossOrigin = this.crossOrigin;
         }
-        
+
         file.data.onload = function () {
             if (file.data.onload)
             {
@@ -57850,8 +57884,8 @@ Phaser.Loader.prototype = {
             }
         };
 
-        file.data.src = this.transformUrl(file.url, file);
-        
+        file.data.src = url;
+
         // Image is immediately-available/cached
         if (file.data.complete && file.data.width && file.data.height)
         {
@@ -57884,7 +57918,7 @@ Phaser.Loader.prototype = {
         {
             file.data = new Audio();
             file.data.name = file.key;
-            
+
             var playThroughEvent = function () {
                 file.data.removeEventListener('canplaythrough', playThroughEvent, false);
                 file.data.onerror = null;
@@ -57960,7 +57994,7 @@ Phaser.Loader.prototype = {
     /**
     * Starts the xhr loader - using XDomainRequest.
     * This should _only_ be used with IE 9. Phaser does not support IE 8 and XDR is deprecated in IE 10.
-    * 
+    *
     * This is designed specifically to use with asset file processing.
     *
     * @method Phaser.Loader#xhrLoad
@@ -58125,7 +58159,7 @@ Phaser.Loader.prototype = {
         switch (file.type)
         {
             case 'packfile':
-                
+
                 // Pack data must never be false-ish after it is fetched without error
                 var data = JSON.parse(xhr.responseText);
                 file.data = data || {};

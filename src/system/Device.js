@@ -62,31 +62,31 @@ Phaser.Device = function () {
     * @default
     */
     this.cocoonJS = false;
-    
+
     /**
     * @property {boolean} cocoonJSApp - Is this game running with CocoonJS.App?
     * @default
     */
     this.cocoonJSApp = false;
-    
+
     /**
     * @property {boolean} cordova - Is the game running under Apache Cordova?
     * @default
     */
     this.cordova = false;
-    
+
     /**
     * @property {boolean} node - Is the game running under Node.js?
     * @default
     */
     this.node = false;
-    
+
     /**
     * @property {boolean} nodeWebkit - Is the game running under Node-Webkit?
     * @default
     */
     this.nodeWebkit = false;
-    
+
     /**
     * @property {boolean} ejecta - Is the game running under Ejecta?
     * @default
@@ -495,7 +495,7 @@ Phaser.Device.whenReady = function (callback, context, nonPrimer) {
         readyCheck._monitor = readyCheck.bind(this);
         readyCheck._queue = readyCheck._queue || [];
         readyCheck._queue.push([callback, context]);
-        
+
         var cordova = typeof window.cordova !== 'undefined';
         var cocoonJS = navigator['isCocoonJS'];
 
@@ -662,6 +662,8 @@ Phaser.Device._initialize = function () {
         device.quirksMode = (document.compatMode === 'CSS1Compat') ? false : true;
 
         device.getUserMedia = !!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+
+        device.blobXHR = _checkBlobXHRSupport();
 
         // TODO: replace canvasBitBltShift detection with actual feature check
 
@@ -841,17 +843,17 @@ Phaser.Device._initialize = function () {
         {
             device.webApp = true;
         }
-        
+
         if (typeof window.cordova !== "undefined")
         {
             device.cordova = true;
         }
-        
+
         if (typeof process !== "undefined" && typeof require !== "undefined")
         {
             device.node = true;
         }
-        
+
         if (device.node)
         {
             try {
@@ -862,12 +864,12 @@ Phaser.Device._initialize = function () {
                 device.nodeWebkit = false;
             }
         }
-        
+
         if (navigator['isCocoonJS'])
         {
             device.cocoonJS = true;
         }
-        
+
         if (device.cocoonJS)
         {
             try {
@@ -970,6 +972,29 @@ Phaser.Device._initialize = function () {
             device.vibration = true;
         }
 
+    }
+
+    /**
+    * Check for blob support
+    *
+    *
+    */
+    function _checkBlobXHRSupport () {
+        if (!window['Blob'] || device.silk || typeof XMLHttpRequest == 'undefined')
+        {
+            return false;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', '/', true);
+
+        try {
+            xhr.responseType = 'blob';
+        } catch(error) {
+            return false;
+        }
+
+        return 'response' in xhr && xhr.responseType == 'blob';
     }
 
     /**
@@ -1157,7 +1182,7 @@ Phaser.Device.isConsoleOpen = function () {
 *
 * @example
 * var defaultRenderingMode = Phaser.Device.isAndroidStockBrowser() ? Phaser.CANVAS : Phaser.AUTO;
-* 
+*
 * @method isAndroidStockBrowser
 * @memberof Phaser.Device.prototype
 */

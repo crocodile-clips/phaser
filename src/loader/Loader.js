@@ -108,11 +108,11 @@ Phaser.Loader = function (game) {
     * This event is dispatched when a file has either loaded or failed to load.
     *
     * Params: `(progress, file key, success?, total loaded files, total files)`
-    * 
+    *
     * @property {Phaser.Signal} onFileComplete
     */
     this.onFileComplete = new Phaser.Signal();
-   
+
     /**
     * This event is dispatched when a file (or pack) errors as a result of the load request.
     *
@@ -219,7 +219,7 @@ Phaser.Loader = function (game) {
     * @private
     */
     this._totalFileCount = 0;
-    
+
     /**
     * Total packs loaded - adjusted just prior to `onPackComplete`.
     * @property {integer} _loadedPackCount
@@ -456,7 +456,7 @@ Phaser.Loader.prototype = {
         }
 
         var fileIndex = this.getAssetIndex(type, key);
-        
+
         if (overwrite && fileIndex > -1)
         {
             var currentFile = this._fileList[fileIndex];
@@ -540,10 +540,10 @@ Phaser.Loader.prototype = {
             {
                 data = JSON.parse(data);
             }
-            
+
             pack.data = data || {};
         }
-        
+
         // Add before first non-pack/no-loaded ~ last pack from start prior to loading
         // (Read one past for splice-to-end)
         for (var i = 0; i < this._fileList.length + 1; i++)
@@ -1051,7 +1051,7 @@ Phaser.Loader.prototype = {
     /**
     * Add a synchronization point to a specific file/asset in the load queue.
     *
-    * This has no effect on already loaded assets.    
+    * This has no effect on already loaded assets.
     *
     * @method Phader.Loader#withSyncPoints
     * @param {function} callback - The callback is invoked and is supplied with a single argument: the loader.
@@ -1153,7 +1153,7 @@ Phaser.Loader.prototype = {
         for (var i = 0; i < this._flightQueue.length; i++)
         {
             var file = this._flightQueue[i];
-            
+
             if (file.loaded || file.error)
             {
                 this._flightQueue.splice(i, 1);
@@ -1236,7 +1236,7 @@ Phaser.Loader.prototype = {
                     this._flightQueue.push(file);
                     file.loading = true;
                     this.onFileStart.dispatch(this.progress, file.key, file.url);
-                    
+
                     this.loadFile(file);
                 }
             }
@@ -1451,7 +1451,16 @@ Phaser.Loader.prototype = {
             case 'spritesheet':
             case 'textureatlas':
             case 'bitmapfont':
-                this.loadImageTag(file);
+                if (this.game.device.blobXHR && !!window['URL'] && !!window.URL['createObjectURL'] && !this.useXDomainRequest)
+                {
+                    this.xhrLoad(file, this.transformUrl(file.url, file), 'blob', function (file, request) {
+                        this.loadImageTag(file, URL.createObjectURL(request.response));
+                    });
+                }
+                else
+                {
+                    this.loadImageTag(file, this.transformUrl(file.url, file));
+                }
                 break;
 
             case 'audio':
@@ -1518,7 +1527,7 @@ Phaser.Loader.prototype = {
     * Continue async loading through an Image tag.
     * @private
     */
-    loadImageTag: function (file) {
+    loadImageTag: function (file, url) {
 
         var _this = this;
 
@@ -1529,7 +1538,7 @@ Phaser.Loader.prototype = {
         {
             file.data.crossOrigin = this.crossOrigin;
         }
-        
+
         file.data.onload = function () {
             if (file.data.onload)
             {
@@ -1547,8 +1556,8 @@ Phaser.Loader.prototype = {
             }
         };
 
-        file.data.src = this.transformUrl(file.url, file);
-        
+        file.data.src = url;
+
         // Image is immediately-available/cached
         if (file.data.complete && file.data.width && file.data.height)
         {
@@ -1581,7 +1590,7 @@ Phaser.Loader.prototype = {
         {
             file.data = new Audio();
             file.data.name = file.key;
-            
+
             var playThroughEvent = function () {
                 file.data.removeEventListener('canplaythrough', playThroughEvent, false);
                 file.data.onerror = null;
@@ -1657,7 +1666,7 @@ Phaser.Loader.prototype = {
     /**
     * Starts the xhr loader - using XDomainRequest.
     * This should _only_ be used with IE 9. Phaser does not support IE 8 and XDR is deprecated in IE 10.
-    * 
+    *
     * This is designed specifically to use with asset file processing.
     *
     * @method Phaser.Loader#xhrLoad
@@ -1822,7 +1831,7 @@ Phaser.Loader.prototype = {
         switch (file.type)
         {
             case 'packfile':
-                
+
                 // Pack data must never be false-ish after it is fetched without error
                 var data = JSON.parse(xhr.responseText);
                 file.data = data || {};
