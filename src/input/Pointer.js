@@ -536,8 +536,8 @@ Phaser.Pointer.prototype = {
             currentNode = this.game.input.interactiveItems.next;
         }
 
-        console.log("candidate", candidateTarget);
-        console.log("target", this.targetObject);
+        console.log("candidate", candidateTarget && candidateTarget.sprite && candidateTarget.sprite.key);
+        console.log("target",    this.targetObject && this.targetObject.sprite && this.targetObject.sprite.key);
 
         //  Now we know the top-most item (if any) we can process it
         if (candidateTarget === null)

@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 14:56:15
+* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 15:05:23
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -30483,8 +30483,8 @@ Phaser.Pointer.prototype = {
             currentNode = this.game.input.interactiveItems.next;
         }
 
-        console.log("candidate", candidateTarget);
-        console.log("target", this.targetObject);
+        console.log("candidate", candidateTarget && candidateTarget.sprite && candidateTarget.sprite.key);
+        console.log("target",    this.targetObject && this.targetObject.sprite && this.targetObject.sprite.key);
 
         //  Now we know the top-most item (if any) we can process it
         if (candidateTarget === null)
