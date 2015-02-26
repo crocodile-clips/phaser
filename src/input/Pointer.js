@@ -489,8 +489,6 @@ Phaser.Pointer.prototype = {
         //  We know they'll be valid for input detection but not which is the top just yet
         //
 
-        this.game.input.interactiveItems = new Phaser.ArrayList(this.game.input.interactiveItems.list.sort( function(a, b) { return b.priorityID - a.priorityID; }));
-
         var currentNode = this.game.input.interactiveItems.first;
 
         while (currentNode)
@@ -537,6 +535,9 @@ Phaser.Pointer.prototype = {
 
             currentNode = this.game.input.interactiveItems.next;
         }
+
+        console.log("candidate", candidateTarget);
+        console.log("target", targetObject);
 
         //  Now we know the top-most item (if any) we can process it
         if (candidateTarget === null)
