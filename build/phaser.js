@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 14:53:43
+* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 14:56:16
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -12328,7 +12328,7 @@ PIXI.AbstractFilter.prototype.apply = function(frameBuffer)
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 14:53:43
+* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 14:56:15
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -30514,7 +30514,7 @@ Phaser.Pointer.prototype = {
         }
 
         console.log("candidate", candidateTarget);
-        console.log("target", targetObject);
+        console.log("target", this.targetObject);
 
         //  Now we know the top-most item (if any) we can process it
         if (candidateTarget === null)

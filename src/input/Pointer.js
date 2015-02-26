@@ -537,7 +537,7 @@ Phaser.Pointer.prototype = {
         }
 
         console.log("candidate", candidateTarget);
-        console.log("target", targetObject);
+        console.log("target", this.targetObject);
 
         //  Now we know the top-most item (if any) we can process it
         if (candidateTarget === null)
