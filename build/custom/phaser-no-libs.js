@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 12:10:31
+* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 14:44:04
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -17887,7 +17887,7 @@ Phaser.Pointer = function (game, id) {
     * @property {Phaser.Point} positionDown - A Phaser.Point object containing the x/y values of the pointer when it was last in a down state on the display.
     */
     this.positionDown = new Phaser.Point();
-    
+
     /**
     * @property {Phaser.Point} positionUp - A Phaser.Point object containing the x/y values of the pointer when it was last released.
     */
@@ -18040,7 +18040,7 @@ Phaser.Pointer.prototype = {
 
     /**
     * Called when the Pointer is moved.
-    * 
+    *
     * @method Phaser.Pointer#move
     * @param {MouseEvent|PointerEvent|TouchEvent} event - The event passed up from the input handler.
     * @param {boolean} [fromClick=false] - Was this called from the click event?
@@ -18128,7 +18128,7 @@ Phaser.Pointer.prototype = {
 
     /**
     * Process all interactive objects to find out which ones were updated in the recent Pointer move.
-    * 
+    *
     * @method Phaser.Pointer#processInteractiveObjects
     * @protected
     * @param {boolean} [fromClick=false] - Was this called from the click event?
@@ -18143,6 +18143,9 @@ Phaser.Pointer.prototype = {
 
         //  First pass gets all objects that the pointer is over that DON'T use pixelPerfect checks and get the highest ID
         //  We know they'll be valid for input detection but not which is the top just yet
+        //
+
+        this.game.input.interactiveItems = new Phaser.ArrayList(this.game.input.interactiveItems.list.sort( function(a, b) { return b.priorityID - a.priorityID; }));
 
         var currentNode = this.game.input.interactiveItems.first;
 
@@ -18299,9 +18302,9 @@ Phaser.Pointer.prototype = {
         this.isUp = true;
         this.pointerId = null;
         this.identifier = null;
-        
+
         this.positionUp.setTo(this.x, this.y);
-        
+
         if (this.isMouse === false)
         {
             this.game.input.currentPointers--;
