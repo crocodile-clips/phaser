@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Thu Feb 26 2015 12:10:31
+* v2.2.2 "Alkindar" - Built: Thu Mar 05 2015 10:30:33
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -6096,7 +6096,6 @@ Phaser.StateManager.prototype = {
 
         this.game.onPause.add(this.pause, this);
         this.game.onResume.add(this.resume, this);
-        this.game.load.onLoadComplete.add(this.loadComplete, this);
 
         if (this._pendingState !== null)
         {
@@ -45310,6 +45309,8 @@ Phaser.Loader.prototype = {
         this.onLoadComplete.dispatch();
 
         this.reset();
+
+        this.game.state.loadComplete();
 
     },
 
