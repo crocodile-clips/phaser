@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.2.2 "Alkindar" - Built: Thu Mar 05 2015 10:38:18
+* v2.2.2 "Alkindar" - Built: Mon Apr 24 2017 12:53:19
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -47712,7 +47712,12 @@ Phaser.SoundManager.prototype = {
             this._unlockSource = this.context.createBufferSource();
             this._unlockSource.buffer = buffer;
             this._unlockSource.connect(this.context.destination);
-            this._unlockSource.noteOn(0);
+            if (this._unlockSource.start === undefined) {
+                this._unlockSource.noteOn(0);
+            }
+            else {
+                this._unlockSource.start(0);
+            }
         }
 
     },
